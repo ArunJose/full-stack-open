@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
+const Statistic = ({ text, value }) => {
+  value = isNaN(value) ? 0 : value;
+  return (
+    <>
+      {text} {value}
+      <br />
+    </>
+  );
+};
+
 const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad;
   const positive = (good * 100) / total;
@@ -11,13 +21,12 @@ const Statistics = ({ good, neutral, bad }) => {
   return (
     <div>
       <p>
-        good {good} <br />
-        neutral {neutral} <br />
-        bad {bad} <br />
-        all {total} <br />
-        average {isNaN(average) ? 0 : average}
-        <br />
-        positive {isNaN(positive) ? 0 : positive}%
+        <Statistic text="good" value={good} />
+        <Statistic text="neutral" value={neutral} />
+        <Statistic text="bad" value={bad} />
+        <Statistic text="total" value={total} />
+        <Statistic text="average" value={average} />
+        <Statistic text="positive" value={positive} />% good {good} <br />
       </p>
     </div>
   );
