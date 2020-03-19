@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
 const Statistic = ({ text, value }) => {
-  value = isNaN(value) ? 0 : value;
+  value = !value ? 0 : value;
   return (
-    <>
-      {text} {value}
-      <br />
-    </>
+    <tr>
+      <td>
+        {text}
+        {`  `}
+      </td>
+      <td>{value}</td>
+    </tr>
   );
 };
 
@@ -19,16 +22,14 @@ const Statistics = ({ good, neutral, bad }) => {
   const average = (good - bad) / total;
 
   return (
-    <div>
-      <p>
-        <Statistic text="good" value={good} />
-        <Statistic text="neutral" value={neutral} />
-        <Statistic text="bad" value={bad} />
-        <Statistic text="total" value={total} />
-        <Statistic text="average" value={average} />
-        <Statistic text="positive" value={positive} />% good {good} <br />
-      </p>
-    </div>
+    <table>
+      <Statistic text="good" value={good} />
+      <Statistic text="neutral" value={neutral} />
+      <Statistic text="bad" value={bad} />
+      <Statistic text="total" value={total} />
+      <Statistic text="average" value={average} />
+      <Statistic text="positive" value={`${positive}%`} />
+    </table>
   );
 };
 
