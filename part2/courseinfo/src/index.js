@@ -5,9 +5,15 @@ const Header = ({ course }) => {
   return <h1>{course.name}</h1>;
 };
 
-const Total = ({ course }) => {
+const Total2 = ({ course }) => {
   let sum = 0;
   course.parts.forEach((part) => (sum += part.exercises));
+  return <p>Total of {sum} exercises</p>;
+};
+
+const Total = ({ course }) => {
+  const reducer = (acc, curr) => acc + curr;
+  const sum = course.parts.map((part) => part.exercises).reduce(reducer);
   return <p>Total of {sum} exercises</p>;
 };
 
