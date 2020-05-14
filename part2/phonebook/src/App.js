@@ -10,8 +10,12 @@ const App = () => {
 
   const addNewName = (e) => {
     e.preventDefault();
-    setPersons([...persons, { name: newName }]);
-    setNewName("");
+    if (persons.find((person) => person.name === newName)) {
+      window.alert(`${newName} is already added to phonebook`);
+    } else {
+      setPersons([...persons, { name: newName }]);
+      setNewName("");
+    }
   };
   return (
     <div>
@@ -27,7 +31,7 @@ const App = () => {
       <h2>Numbers</h2>
       <ul>
         {persons.map((person) => {
-          return <li>{person.name}</li>;
+          return <li key={person.name}>{person.name}</li>;
         })}
       </ul>
     </div>
