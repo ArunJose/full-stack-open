@@ -1,5 +1,57 @@
 import React, { useState } from "react";
 
+const Persons = ({ persons, filterString }) => {
+  return (
+    <ul>
+      {persons.map((person) => {
+        const personNameUpper = person.name.toUpperCase();
+        return filterString ? (
+          personNameUpper.includes(filterString.toUpperCase()) && (
+            <li key={person.name}>
+              {person.name} {person.number}
+            </li>
+          )
+        ) : (
+          <li key={person.name}>
+            {person.name} {person.number}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+const PersonForm = ({
+  handleNewNameChange,
+  handleNewNumChange,
+  addNewName,
+  newName,
+  newNum,
+}) => {
+  return (
+    <form onSubmit={addNewName}>
+      <div>
+        name: <input value={newName} onChange={handleNewNameChange} />
+      </div>
+      <div>
+        number: <input value={newNum} onChange={handleNewNumChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
+const Filter = ({ filterString, handleFilterStringChange }) => {
+  return (
+    <div>
+      filter shown with{" "}
+      <input value={filterString} onChange={handleFilterStringChange} />
+    </div>
+  );
+};
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456" },
@@ -36,37 +88,19 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with{" "}
-      <input value={filterString} onChange={handleFilterStringChange} />
+      <Filter
+        handleFilterStringChange={handleFilterStringChange}
+        filterString={filterString}
+      />
       <h2>Add a new number</h2>
-      <form onSubmit={addNewName}>
-        <div>
-          name: <input value={newName} onChange={handleNewNameChange} />
-        </div>
-        <div>
-          number: <input value={newNum} onChange={handleNewNumChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        handleNewNumChange={handleNewNumChange}
+        handleNewNameChange={handleNewNameChange}
+        addNewName={addNewName}
+        newName={newName}
+      />
       <h2>Numbers</h2>
-      <ul>
-        {persons.map((person) => {
-          const personNameUpper = person.name.toUpperCase();
-          return filterString ? (
-            personNameUpper.includes(filterString.toUpperCase()) && (
-              <li key={person.name}>
-                {person.name} {person.number}
-              </li>
-            )
-          ) : (
-            <li key={person.name}>
-              {person.name} {person.number}
-            </li>
-          );
-        })}
-      </ul>
+      <Persons persons={persons} filterString={filterString} />
     </div>
   );
 };
