@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 
+const Person = ({ name, number }) => (
+  <span>
+    {name} {number}
+  </span>
+);
+
 const Persons = ({ persons, filterString }) => {
   return (
     <ul>
@@ -8,12 +14,12 @@ const Persons = ({ persons, filterString }) => {
         return filterString ? (
           personNameUpper.includes(filterString.toUpperCase()) && (
             <li key={person.name}>
-              {person.name} {person.number}
+              <Person name={person.name} number={person.number} />
             </li>
           )
         ) : (
           <li key={person.name}>
-            {person.name} {person.number}
+            <Person name={person.name} number={person.number} />
           </li>
         );
       })}
