@@ -52,7 +52,7 @@ const PersonForm = ({
 const Filter = ({ filterString, handleFilterStringChange }) => {
   return (
     <div>
-      filter shown with{" "}
+      Filter shown with{" "}
       <input value={filterString} onChange={handleFilterStringChange} />
     </div>
   );
