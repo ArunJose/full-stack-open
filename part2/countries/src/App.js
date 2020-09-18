@@ -5,7 +5,11 @@ import CountryDetails from "./CountryDetails";
 function App() {
   const [countries, setCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const handleSearch = (e) => {
+    if (!!selectedCountry) {
+      setSelectedCountry(null);
+    }
     setSearchTerm(e.target.value);
   };
   useEffect(() => {
@@ -16,6 +20,9 @@ function App() {
   let filteredCountries = countries.filter((country) => {
     return country.name.toUpperCase().includes(searchTerm.toUpperCase());
   });
+  const handleShow = (c) => {
+    setSelectedCountry(c);
+  };
   return (
     <div className="App">
       <span>find countries</span>
@@ -27,7 +34,9 @@ function App() {
       />
       <br />
       {(() => {
-        if (filteredCountries.length === 0) {
+        if (!!selectedCountry) {
+          return <CountryDetails country={selectedCountry} />;
+        } else if (filteredCountries.length === 0) {
           return <div> No results found </div>;
         } else if (filteredCountries.length > 10) {
           return <div>Too many matches, specify another filter</div>;
@@ -36,7 +45,8 @@ function App() {
         } else {
           return filteredCountries.map((country) => (
             <span key={country.name}>
-              {country.name}
+              {country.name}{" "}
+              <button onClick={() => handleShow(country)}>Show</button>
               <br />
             </span>
           ));
