@@ -6,17 +6,17 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(null);
+  useEffect(() => {
+    axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
+      setCountries(response.data);
+    });
+  }, []);
   const handleSearch = (e) => {
     if (!!selectedCountry) {
       setSelectedCountry(null);
     }
     setSearchTerm(e.target.value);
   };
-  useEffect(() => {
-    axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
-      setCountries(response.data);
-    });
-  }, []);
   let filteredCountries = countries.filter((country) => {
     return country.name.toUpperCase().includes(searchTerm.toUpperCase());
   });
@@ -36,6 +36,8 @@ function App() {
       {(() => {
         if (!!selectedCountry) {
           return <CountryDetails country={selectedCountry} />;
+        } else if (searchTerm === "") {
+          return <div> Enter a search term </div>;
         } else if (filteredCountries.length === 0) {
           return <div> No results found </div>;
         } else if (filteredCountries.length > 10) {
