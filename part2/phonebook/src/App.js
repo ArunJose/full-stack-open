@@ -88,9 +88,14 @@ const App = () => {
     if (persons.find((person) => person.name === newName)) {
       window.alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons([...persons, { name: newName, number: newNum }]);
-      setNewName("");
-      setNewNum("");
+      const newPerson = { name: newName, number: newNum };
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then((response) => {
+          setPersons([...persons, response.data]);
+          setNewName("");
+          setNewNum("");
+        });
     }
   };
   return (
