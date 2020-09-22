@@ -7,20 +7,22 @@ const Person = ({ name, number }) => (
   </span>
 );
 
-const Persons = ({ persons, filterString }) => {
+const Persons = ({ persons, filterString, handleRemove }) => {
   return (
     <ul>
       {persons.map((person) => {
         const personNameUpper = person.name.toUpperCase();
         return filterString ? (
           personNameUpper.includes(filterString.toUpperCase()) && (
-            <li key={person.name}>
-              <Person name={person.name} number={person.number} />
+            <li key={person.id}>
+              <Person name={person.name} number={person.number} />{" "}
+              <button onClick={() => handleRemove(person.id)}>Delete</button>
             </li>
           )
         ) : (
-          <li key={person.name}>
+          <li key={person.id}>
             <Person name={person.name} number={person.number} />
+            <button onClick={() => handleRemove(person.id)}>Delete</button>
           </li>
         );
       })}
@@ -81,19 +83,24 @@ const App = () => {
     setNewNum(e.target.value);
   };
 
+  const handleRemove = (id) => {
+    if (
+      window.confirm(
+        `Delete ${persons.find((person) => person.id === id).name}?`
+      )
+    ) {
+      personService.remove(id).then((removedPerson) => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+
   const addNewName = (e) => {
     e.preventDefault();
     if (persons.find((person) => person.name === newName)) {
       window.alert(`${newName} is already added to phonebook`);
     } else {
       const newPerson = { name: newName, number: newNum };
-      axios
-        .post("http://localhost:3001/persons", newPerson)
-        .then((response) => {
-          setPersons([...persons, response.data]);
-          setNewName("");
-          setNewNum("");
-        });
       personService.create(newPerson).then((createdPerson) => {
         setPersons(persons.concat(createdPerson));
         setNewName("");
@@ -117,7 +124,11 @@ const App = () => {
       />
       <h2>Numbers</h2>
       {persons.length > 0 && (
-        <Persons persons={persons} filterString={filterString} />
+        <Persons
+          persons={persons}
+          filterString={filterString}
+          handleRemove={handleRemove}
+        />
       )}
     </div>
   );
