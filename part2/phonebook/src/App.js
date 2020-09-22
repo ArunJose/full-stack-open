@@ -40,10 +40,16 @@ const PersonForm = ({
   return (
     <form onSubmit={addNewName}>
       <div>
-        name: <input value={newName} onChange={handleNewNameChange} />
+        name:{" "}
+        <input
+          value={newName}
+          onChange={handleNewNameChange}
+          name="contactName"
+        />
       </div>
       <div>
-        number: <input value={newNum} onChange={handleNewNumChange} />
+        number:{" "}
+        <input value={newNum} onChange={handleNewNumChange} name="contactNum" />
       </div>
       <div>
         <button type="submit">add</button>
@@ -97,14 +103,30 @@ const App = () => {
 
   const addNewName = (e) => {
     e.preventDefault();
-    if (persons.find((person) => person.name === newName)) {
-      window.alert(`${newName} is already added to phonebook`);
+    let existingPerson = false;
+    if ((existingPerson = persons.find((person) => person.name === newName))) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace old number with a new one?`
+        )
+      ) {
+        personService
+          .update(existingPerson.id, { ...existingPerson, number: newNum })
+          .then((updatedPerson) => {
+            setPersons([
+              ...persons.filter((p) => p.id !== updatedPerson.id),
+              updatedPerson,
+            ]);
+            setNewName("");
+            setNewNum("");
+          });
+      }
     } else {
       const newPerson = { name: newName, number: newNum };
       personService.create(newPerson).then((createdPerson) => {
         setPersons(persons.concat(createdPerson));
-        setNewName("");
         setNewNum("");
+        setNewName("");
       });
     }
   };
@@ -121,6 +143,7 @@ const App = () => {
         handleNewNameChange={handleNewNameChange}
         addNewName={addNewName}
         newName={newName}
+        newNum={newNum}
       />
       <h2>Numbers</h2>
       {persons.length > 0 && (
