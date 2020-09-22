@@ -1,77 +1,16 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
-
-const Person = ({ name, number }) => (
-  <span>
-    {name} {number}
-  </span>
-);
-
-const Persons = ({ persons, filterString, handleRemove }) => {
-  return (
-    <ul>
-      {persons.map((person) => {
-        const personNameUpper = person.name.toUpperCase();
-        return filterString ? (
-          personNameUpper.includes(filterString.toUpperCase()) && (
-            <li key={person.id}>
-              <Person name={person.name} number={person.number} />{" "}
-              <button onClick={() => handleRemove(person.id)}>Delete</button>
-            </li>
-          )
-        ) : (
-          <li key={person.id}>
-            <Person name={person.name} number={person.number} />
-            <button onClick={() => handleRemove(person.id)}>Delete</button>
-          </li>
-        );
-      })}
-    </ul>
-  );
-};
-
-const PersonForm = ({
-  handleNewNameChange,
-  handleNewNumChange,
-  addNewName,
-  newName,
-  newNum,
-}) => {
-  return (
-    <form onSubmit={addNewName}>
-      <div>
-        name:{" "}
-        <input
-          value={newName}
-          onChange={handleNewNameChange}
-          name="contactName"
-        />
-      </div>
-      <div>
-        number:{" "}
-        <input value={newNum} onChange={handleNewNumChange} name="contactNum" />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-
-const Filter = ({ filterString, handleFilterStringChange }) => {
-  return (
-    <div>
-      Filter shown with{" "}
-      <input value={filterString} onChange={handleFilterStringChange} />
-    </div>
-  );
-};
+import Notification from "./components/Notification";
+import Persons from "./components/Persons";
+import PersonForm from "./components/PersonForm.js";
+import Filter from "./components/Filter.js";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNum, setNewNum] = useState("");
   const [filterString, setFilterString] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((persons) => setPersons(persons));
@@ -95,7 +34,7 @@ const App = () => {
         `Delete ${persons.find((person) => person.id === id).name}?`
       )
     ) {
-      personService.remove(id).then((removedPerson) => {
+      personService.remove(id).then(() => {
         setPersons(persons.filter((person) => person.id !== id));
       });
     }
@@ -119,6 +58,16 @@ const App = () => {
             ]);
             setNewName("");
             setNewNum("");
+          })
+          .catch((error) => {
+            setNotification({
+              message: `Contact '${existingPerson.name}' was already removed from server`,
+              color: "red",
+            });
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
+            setPersons(persons.filter((p) => p.id !== existingPerson.id));
           });
       }
     } else {
@@ -127,12 +76,20 @@ const App = () => {
         setPersons(persons.concat(createdPerson));
         setNewNum("");
         setNewName("");
+        setNotification({
+          message: `Added '${createdPerson.name}' to the phonebook`,
+          color: "green",
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
       });
     }
   };
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter
         handleFilterStringChange={handleFilterStringChange}
         filterString={filterString}
