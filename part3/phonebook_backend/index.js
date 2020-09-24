@@ -7,6 +7,11 @@ app.use(express.json());
 const PORT = 3001;
 
 app.use(morgan("tiny"));
+app.use(morgan(":post-data"));
+
+morgan.token("post-data", function (req, res) {
+  if (req.method === "POST") return JSON.stringify(req.body);
+});
 
 let persons = [
   {
