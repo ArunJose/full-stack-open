@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 
 app.use(express.json());
 
 const PORT = 3001;
+
+app.use(morgan("tiny"));
 
 let persons = [
   {
@@ -65,8 +68,8 @@ app.post("/api/persons", (req, res) => {
     res.status(409).json({ error: "name must be unique" });
   } else {
     const newContact = {
-      name: req.body.name,
-      number: req.body.number,
+      name,
+      number,
       id: Math.ceil(10000 * Math.random()),
     };
     persons.push(newContact);
