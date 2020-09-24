@@ -58,11 +58,20 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  persons.push({
-    name: req.body.name,
-    number: req.body.number,
-    id: Math.ceil(10000 * Math.random()),
-  });
+  const { name, number } = req.body;
+  if (!name || !number) {
+    res.status(400).json({ error: "content missing" });
+  } else if (persons.find((person) => person.name === name)) {
+    res.status(409).json({ error: "name must be unique" });
+  } else {
+    const newContact = {
+      name: req.body.name,
+      number: req.body.number,
+      id: Math.ceil(10000 * Math.random()),
+    };
+    persons.push(newContact);
+    res.json(newContact);
+  }
 });
 
 app.listen(PORT);
